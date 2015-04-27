@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
-namespace PcapdotNET.Protocols.TCP
+namespace PcapdotNET.Protocols
 {
     // Processing pcap file
     public class FileParser
@@ -10,7 +11,6 @@ namespace PcapdotNET.Protocols.TCP
         // Put here all info, collected from file
         private readonly ArrayList EthernetFrameArray = new ArrayList();
         private readonly ArrayList TCPFrameArray = new ArrayList();
-        private string FileName; // Checked file name
 
         public FileParser(string _FileName)
         {
@@ -23,7 +23,7 @@ namespace PcapdotNET.Protocols.TCP
                     // Missed header of file
                     reader.ReadBytes(24);
 
-                    while (reader.ReadByte() != -1)
+                    while (reader.ReadByte() > 0)
                     {
                         // Variables for TCPandUDPFrame filling
                         var DestinationIP = new int[4];
@@ -69,13 +69,9 @@ namespace PcapdotNET.Protocols.TCP
                         reader.ReadByte();
 
                         // Fill Source & Destination IP
-                        for (int i = 0; i < 4; ++i)
-                            SourceIP[i] = reader.ReadByte();
-
-                        for (int j = 0; j < 4; ++j)
-                            DestinationIP[j] = reader.ReadByte();
-
-
+                        ReadSourceIp(SourceIP, ref reader);
+                        ReadDestinationIp(DestinationIP, ref reader);
+       
                         // ReadUInt16 reads in another endian, so we have to use this trick ( multiply 256 is the same for 8 bit offset to the left)
                         var DraftPort = new uint[2];
 
@@ -90,17 +86,18 @@ namespace PcapdotNET.Protocols.TCP
 
                         DestinationPort = DraftPort[0]*256 + DraftPort[1];
 
-                        var E = new EthernetFrame(EthernetDestinationIP, EthernetSourceIP);
+                        var ethernetFrame = new EthernetFrame(EthernetDestinationIP, EthernetSourceIP);
 
-                        // Fill current TCPandUDPFrame
+                        // Fill current TCPandUDPFrame !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         var T = new TCPandUDPFrame(DestinationIP, DestinationPort, FrameLength, SourceIP, SourcePort,
                             ProtocolNumber);
+                        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                         // Pull current TCPandUDPFrame to dump
                         TCPFrameArray.Add(T);
 
                         // Pull current Ethernet frame to dump
-                        EthernetFrameArray.Add(E);
+                        EthernetFrameArray.Add(ethernetFrame);
 
                         // Miss ending of pcap-file, witch depends on FrameLength
                         reader.ReadBytes((int) (FrameLength - 38));
@@ -116,6 +113,16 @@ namespace PcapdotNET.Protocols.TCP
             else throw new FileNotFoundException();
         }
 
+        private void ReadSourceIp(IList<int> SourceIP, ref System.IO.BinaryReader reader)
+        {
+            for (int i = 0; i < 4; ++i)
+                SourceIP[i] = reader.ReadByte();
+        }
+        private void ReadDestinationIp(IList<int> DestinationIP, ref System.IO.BinaryReader reader)
+        {
+            for (int j = 0; j < 4; ++j)
+                DestinationIP[j] = reader.ReadByte();
+        }
         // Get this dump of processed frames
         public ArrayList GetTCPFrameList()
         {

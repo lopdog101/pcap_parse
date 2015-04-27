@@ -1,12 +1,19 @@
-﻿using System;
-using PcapdotNET.Annotations;
+﻿/*
+ * This class consists of the names of the protocols described on Microsoft WebSite
+*/
 
 namespace PcapdotNET.Protocols
 {
     public class TableProtocols
     {
+        /*
+         * Create field consist of string
+         */
         private static string[] _tableProtocols = new string [134];
 
+        /*
+         * Method return string with name needed protocol
+         */
         public string GetProtocol(int index)
         {
             _tableProtocols[0] = "HOPOPT";  //IPv6 Hop-by-Hop Option

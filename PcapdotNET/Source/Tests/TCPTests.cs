@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
 using PcapdotNET.Protocols;
-using PcapdotNET.Protocols.TCP;
 
 namespace Tests
 {
@@ -11,7 +10,7 @@ namespace Tests
         [Test]
         public void NoFileTest()
         {
-            var T = new FileParser("D:/loopback-udp-dns.pcap");
+            var T = new FileParser("D:/icmp fragmented.cap");
             Console.WriteLine(T.GetTCPFrameList().Capacity);
 
             foreach (TCPandUDPFrame Element in T.GetTCPFrameList())
