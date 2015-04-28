@@ -11,9 +11,9 @@ namespace Tests
         public void NoFileTest()
         {
             var T = new FileParser("D:/icmp fragmented.cap");
-            Console.WriteLine(T.GetTCPFrameList().Capacity);
+            Console.WriteLine(T.GetTcpFrameList().Capacity);
 
-            foreach (TCPandUDPFrame Element in T.GetTCPFrameList())
+            foreach (TCPandUDPFrame Element in T.GetTcpFrameList())
             {
                 Console.WriteLine(Element.GetInformation());
             }

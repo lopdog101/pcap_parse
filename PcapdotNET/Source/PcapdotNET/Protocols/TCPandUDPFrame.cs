@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 
 namespace PcapdotNET.Protocols
-{
+{ 
     // TCPandUDPFrame - contains information about processed frame (UDP & TCP files)
     public class TCPandUDPFrame
     {
@@ -11,7 +11,7 @@ namespace PcapdotNET.Protocols
         private readonly uint _protocolNumber;               //2 bytes for the source port number
         private readonly int[] _sourceIp = new int[4];       //4 parts for source ip
         private readonly uint _sourcePort;                   //2 bytes for the source port number
-        private readonly TableProtocols _tableProtocol = new TableProtocols();
+        private readonly static TableProtocols _tableProtocol = new TableProtocols();
 
         public TCPandUDPFrame(int[] destinationIP, uint destinationPort, uint frameLength, int[] sourceIP,
             uint sourcePort,uint protocolNumber)
@@ -44,13 +44,13 @@ namespace PcapdotNET.Protocols
 
         public string GetDestinationIP()
         {
-            string result = _destinationIp[0] + "." + _destinationIp[1] + "." + _destinationIp[2] + "." + _destinationIp[3];
+            var result = _destinationIp[0] + "." + _destinationIp[1] + "." + _destinationIp[2] + "." + _destinationIp[3];
             return result;
         }
 
         public string GetSourceIP()
         {
-            string result = _sourceIp[0] + "." + _sourceIp[1] + "." + _sourceIp[2] + "." + _sourceIp[3];
+            var result = _sourceIp[0] + "." + _sourceIp[1] + "." + _sourceIp[2] + "." + _sourceIp[3];
             return result;
         }
 
